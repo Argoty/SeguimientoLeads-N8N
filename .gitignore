@@ -1,0 +1,18 @@
+# Secretos y entorno
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+
+# Sistema y editor
+.DS_Store
+Thumbs.db
+.obsidian/workspace*
+*.swp
+*~
+
+# Dependencias y artefactos
+node_modules/
+dist/
+*.log
