@@ -27,7 +27,13 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 
 ## Arquitectura
 
-![Diagrama de proceso manual y automatizado](documentacion/diagramas/Flujo_Manual_Automatizado_1.jpg)
+**Proceso manual**
+
+![Diagrama del proceso manual](documentacion/diagramas/Diagrama1_Proceso_Manual_Corte2.png)
+
+**Proceso automatizado**
+
+![Diagrama del proceso automatizado](documentacion/diagramas/Diagrama2_Proceso_Automatizado_Corte2.png)
 
 ```text
 Telegram ──POST──> 6.1 Main ──> 6.2 Subworkflow_PrepararLead ──> Baserow (leads)
@@ -132,7 +138,7 @@ Enviar `Prueba | sin-arroba | ALTO | mensaje`: `Contrato completo?` corta el flu
 
 - Bitácora unificada: `documentacion/Bitacora_Unificada_Proyecto.md` *(pendiente)*
 - Presentación en PDF: `documentacion/Presentacion_Corte_2.pdf` *(pendiente)*
-- Diagramas: [`documentacion/diagramas/`](documentacion/diagramas) · Evidencias: [`documentacion/evidencias/`](documentacion/evidencias) · Workflows: [`workflows/`](workflows)
+- Diagramas: [Proceso manual](documentacion/diagramas/Diagrama1_Proceso_Manual_Corte2.png) · [Proceso automatizado](documentacion/diagramas/Diagrama2_Proceso_Automatizado_Corte2.png) · Evidencias: [`documentacion/evidencias/`](documentacion/evidencias) · Workflows: [`workflows/`](workflows)
 
 ## Estado del proyecto
 
