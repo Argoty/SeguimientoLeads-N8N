@@ -19,11 +19,11 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 
 ## Alcance actual
 
-**Disponible:** entrada por webhook de Telegram con respuesta 200 inmediata · validación de los campos obligatorios · clasificación empresarial/personal y por interés (`ALTO`/`MEDIO`/`BAJO`) en un subworkflow reutilizable · acción de seguimiento asignada automáticamente · guardado en Baserow con 2 reintentos · confirmación al chat · registro de incidencias y aviso al usuario si falla el guardado · manejador de errores global.
+**Disponible:** entrada por webhook de Telegram con respuesta 200 inmediata · validación de los campos obligatorios · clasificación empresarial/personal y por interés (`ALTO`/`MEDIO`/`BAJO`) en un subworkflow reutilizable · acción de seguimiento asignada automáticamente · guardado en Baserow con un reintento · confirmación al chat · registro de incidencias y aviso al usuario si falla el guardado · manejador de errores global.
 
 **Fuera de alcance:** panel de métricas · WhatsApp Business API · autenticación de usuarios finales · notificación por correo o Slack · deduplicación por `update_id` · edición o consulta de leads desde n8n (solo se crean filas).
 
-> La entrada por formulario corresponde a las versiones intermedias del proyecto (workflows 01 a 05). La versión que se entrega se consolidó en los cuatro workflows de `workflows/`, con entrada por Telegram.
+> Las versiones intermedias del curso (entrada por formulario, workflows 01 a 05) no forman parte de esta entrega: los cuatro JSON de `workflows/` son la versión final.
 
 ## Arquitectura
 
@@ -34,14 +34,6 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 **Proceso automatizado**
 
 ![Diagrama del proceso automatizado](documentacion/diagramas/Diagrama2_Proceso_Automatizado_Corte2.png)
-
-```text
-Telegram ──POST──> 6.1 Main ──> 6.2 Subworkflow_PrepararLead ──> Baserow (leads)
-                      │  └──> Confirmación al chat
-                      └── error ──> Baserow (incidencias) + aviso al usuario
-
-Cualquier error no controlado ──> 6.3 Manejador ──> Baserow (incidencias)
-```
 
 | Workflow | Responsabilidad | Entrada | Salida |
 | --- | --- | --- | --- |
@@ -57,7 +49,6 @@ Cualquier error no controlado ──> 6.3 Manejador ──> Baserow (incidencias
 | **Telegram Bot API** | Entrada y salida del proceso | Webhook `POST /webhook/tg-leads` para recibir; nodo nativo `Telegram` para responder al chat |
 | **Baserow — tabla de leads** | Almacenamiento del lead clasificado | `HTTP Request` `POST /api/database/rows/table/<LEADS_ID>/` con `user_field_names=true` |
 | **Baserow — tabla de incidencias** | Registro de fallos técnicos | `HTTP Request` `POST /api/database/rows/table/<INCIDENCIAS_ID>/` con `user_field_names=true` |
-| **cloudflared** | Expone el n8n local a internet | Túnel temporal iniciado por `workflows/iniciar_bot.sh` |
 
 ## Requisitos
 
@@ -81,7 +72,7 @@ Cualquier error no controlado ──> 6.3 Manejador ──> Baserow (incidencias
 3. Reasignar las credenciales en `Aviso de formato al chat`, `Confirmar registro al chat` y `Aviso de error al registrar` (Telegram), y en los tres nodos HTTP (`HTTP · Guardar fila Baserow1`, `HTTP Registrar Incidente` y el `HTTP Request` del manejador), que pueden usar tokens distintos.
 4. Reemplazar los IDs de tabla en las URLs (`/api/database/rows/table/<ID>/`) y conservar la query `user_field_names=true`.
 5. En 6.1 y 6.4: *Settings → Error Workflow* → seleccionar el manejador 6.3. La asociación por ID no sobrevive a la importación.
-6. Activar 6.1 y 6.3. El 6.4 debe quedar **inactivo** salvo durante la prueba de fallo.
+6. Activar **solo 6.1**. El 6.3 no se activa: lo invoca n8n como Error Workflow. El 6.4 debe quedar **inactivo** salvo durante la prueba de fallo.
 
 ## Ejecución
 
@@ -122,15 +113,16 @@ Enviar `Prueba | sin-arroba | ALTO | mensaje`: `Contrato completo?` corta el flu
 
 | Campo | Valor |
 | --- | --- |
-| Pasos | Activar 6.4 → esperar la ejecución del `Schedule Trigger` → revisar la tabla de incidencias |
+| Pasos | Activar 6.4 → su `Schedule Trigger` corre **cada minuto** → revisar la tabla de incidencias → **desactivar 6.4** |
+| Ejecución | Automática (agendada) |
 | Resultado esperado | `Stop and Error` falla, el manejador 6.3 registra la incidencia con `nodo: Stop and Error` y `estado: pendiente_revision` |
 | Resultado observado | Pendiente de completar con la evidencia |
 
 ## Errores y recuperación
 
 - **Mensaje inválido**: es una respuesta del negocio. No se guarda y el chat recibe el formato esperado.
-- **Fallo al guardar en Baserow**: el nodo reintenta 2 veces con 2 s de espera. Si igual falla, la rama de error registra la incidencia y avisa al usuario (`Tu lead quedó en revisión por un error técnico`). La recuperación es corregir la causa (por ejemplo, una opción inexistente en una columna de selección) y reenviar el lead.
-- **Error no controlado en cualquier nodo**: lo captura el manejador 6.3 y lo deja en la tabla de incidencias con workflow, ejecución, nodo y mensaje.
+- **Fallo al guardar en Baserow**: el nodo hace 2 intentos (1 reintento, 2 s de espera). Si igual falla, la rama de error registra la incidencia y avisa al usuario (`Tu lead quedó en revisión por un error técnico`). La recuperación es corregir la causa (por ejemplo, una opción inexistente en una columna de selección) y reenviar el lead.
+- **Error no controlado en cualquier nodo**: lo captura el manejador 6.3 y lo deja en la tabla de incidencias con workflow, ejecución, nodo y mensaje. Si esa tabla no existe o la credencial es incorrecta, el manejador falla y no queda registro.
 - **Túnel caído o URL vencida**: no genera error visible porque Telegram deja de entregar updates; se vuelve a ejecutar `iniciar_bot.sh`.
 - **Duplicados**: no hay deduplicación por `update_id` y los reintentos pueden duplicar una fila si el POST se completó pero la respuesta se perdió. Antes de reintentar, revisar la tabla de leads.
 
@@ -144,9 +136,9 @@ Enviar `Prueba | sin-arroba | ALTO | mensaje`: `Contrato completo?` corta el flu
 
 | Clasificación | Elementos |
 | --- | --- |
-| **Implementado** | Webhook de Telegram con respuesta 200, validación del contrato, subworkflow de clasificación, acción automática, guardado en Baserow con reintentos, confirmación al chat, registro de incidencias y manejador de errores global. |
-| **Simulado** | Leads de prueba enviados manualmente y fallo forzado con el workflow 6.4. Sin tráfico real de producción. |
-| **Propuesto** | Deduplicación por `update_id`, consulta y actualización de leads, integración con WhatsApp Business API y panel de métricas. |
+| **Implementado** | Flujo completo por Telegram: validación del mensaje, subworkflow de clasificación, acción asignada, guardado en Baserow, confirmación al chat y registro de errores con aviso al usuario. |
+| **Simulado** | Pruebas con leads ficticios y fallo forzado con el workflow 6.4. Sin tráfico real de producción. |
+| **Propuesto** | Deduplicación por `update_id`, lectura y actualización de leads, WhatsApp Business API y panel de métricas. |
 
 ## Acceso al proyecto
 
