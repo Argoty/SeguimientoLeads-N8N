@@ -1,0 +1,507 @@
+{
+  "name": "Seguimiento leads 6.1 - Main",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "tg-leads",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1680,
+        176
+      ],
+      "id": "ab48261b-e886-4521-91f7-e3d9aee05f72",
+      "name": "Webhook Telegram",
+      "webhookId": "9cbc33e7-083f-4e2c-80a9-1cd414d5d5cc"
+    },
+    {
+      "parameters": {
+        "respondWith": "noData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        -1440,
+        176
+      ],
+      "id": "09336704-c241-42e7-a7ad-1d2dc1062dd6",
+      "name": "Responder 200 a Telegram"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.first().json.body || {};\nconst msg = body.message || {};\nconst partes = (msg.text || '').trim().split('|').map(p => p.trim());\nconst [nombre = '', correo = '', interes = '', ...resto] = partes;\n\nreturn [{\n  json: {\n    nombre,\n    correo: correo.toLowerCase(),\n    interes: interes.toUpperCase(),\n    mensaje: resto.join(' | '),\n    canal: 'Telegram',\n    chat_id: msg.chat?.id ?? null,\n    update_id: body.update_id ?? null,\n    submittedAt: msg.date ? new Date(msg.date * 1000).toISOString() : new Date().toISOString(),\n    formMode: 'telegram'\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -1248,
+        192
+      ],
+      "id": "dc07d4f0-7597-4fdc-b600-efc14dc601e3",
+      "name": "Parsear mensaje"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "7a5343bb-0675-4e8b-89d4-442772422d35",
+              "leftValue": "={{ $json.nombre }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "2f8cca01-16c5-41df-8b07-58ae63398958",
+              "leftValue": "={{ $json.correo }}",
+              "rightValue": "@",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "a9268090-8c99-4f3d-9e56-4ef5a47cf993",
+              "leftValue": "={{ ['ALTO','MEDIO','BAJO'].includes($json.interes) }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "d1db5e9e-816b-4eee-8893-6c630cdfb144",
+              "leftValue": "={{ $json.mensaje }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "b63bcc08-01ac-42e8-bbe1-c40f1e848c55",
+              "leftValue": "={{ String($json.chat_id ?? '') }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        -1008,
+        208
+      ],
+      "id": "43bde216-951e-4483-9786-f3ac1e81e2fa",
+      "name": "Contrato completo?"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.chat_id }}",
+        "text": "Formato incorrecto. Enviame los datos asi:\nNombre | correo | ALTO, MEDIO o BAJO | mensaje\n\nEjemplo:\nLaura Gómez | laura@empresa.com | ALTO | Quiero agendar una visita",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -784,
+        400
+      ],
+      "id": "806aed2f-9b41-4a46-8db8-4854a1c3affc",
+      "name": "Aviso de formato al chat",
+      "webhookId": "c77afe63-8f68-4acd-9bcc-4bc429bf93bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "BLgvTGMCb9hctWeW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parsear mensaje').first().json.chat_id }}",
+        "text": "={{ 'Lead registrado: ' + $('PrepararLead\\'').first().json.nombre + ' | Acción: ' + $('PrepararLead\\'').first().json.accion }}",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -16
+      ],
+      "id": "19124752-d9b0-4a30-b379-022d1f2f164e",
+      "name": "Confirmar registro al chat",
+      "webhookId": "f56781f6-2200-4176-a2f1-28b8117f24ab",
+      "credentials": {
+        "telegramApi": {
+          "id": "BLgvTGMCb9hctWeW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.baserow.io/api/database/rows/table/1227763/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "baserowTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_field_names",
+              "value": "true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ nombre: $json.nombre, correo: $json.correo, interes: $json.interes, mensaje: $json.mensaje, canal: $json.canal, submittedAt: $json.submittedAt, formMode: 'test', es_empresarial: $json.es_empresarial, accion: $json.accion }) }}",
+        "options": {}
+      },
+      "id": "3f06414c-3568-41da-8afd-d4667913956e",
+      "name": "HTTP · Guardar fila Baserow1",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -448,
+        112
+      ],
+      "retryOnFail": true,
+      "waitBetweenTries": 2000,
+      "maxTries": 2,
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "KnXmUnGESIpYaBbw",
+          "name": "Baserow Token account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "9mCuXyvGPH3DIcQT",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/9mCuXyvGPH3DIcQT",
+          "cachedResultName": "Seguimiento leads 6.2 - Subworkflow_PrepararLead"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "chat_id": "={{ $json.chat_id }}",
+            "update_id": "={{ $json.update_id }}",
+            "nombre": "={{ $json.nombre }}",
+            "correo": "={{ $json.correo }}",
+            "interes": "={{ $json.interes }}",
+            "mensaje": "={{ $json.mensaje }}",
+            "canal": "={{ $json.canal }}",
+            "submittedAt": "={{ $('Parsear mensaje').item.json.submittedAt }}",
+            "formMode": "={{ $('Parsear mensaje').item.json.formMode }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "nombre",
+              "displayName": "nombre",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "correo",
+              "displayName": "correo",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "interes",
+              "displayName": "interes",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "mensaje",
+              "displayName": "mensaje",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "canal",
+              "displayName": "canal",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "chat_id",
+              "displayName": "chat_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "update_id",
+              "displayName": "update_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "number",
+              "removed": false
+            },
+            {
+              "id": "submittedAt",
+              "displayName": "submittedAt",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            },
+            {
+              "id": "formMode",
+              "displayName": "formMode",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "canBeUsedToMatch": true,
+              "type": "string",
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        -784,
+        112
+      ],
+      "id": "b0489067-008e-4198-a83c-8345b065b365",
+      "name": "PrepararLead'"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Parsear mensaje').first().json.chat_id }}",
+        "text": "Tu lead quedó en revisión por un error técnico. Lo atenderemos manualmente. Gracias por tu paciencia.",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        208
+      ],
+      "id": "871c09e9-5d45-47ca-b814-d526ea77c6e8",
+      "name": "Aviso de error al registrar",
+      "webhookId": "c77afe63-8f68-4acd-9bcc-4bc429bf93bc",
+      "credentials": {
+        "telegramApi": {
+          "id": "BLgvTGMCb9hctWeW",
+          "name": "Telegram account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.baserow.io/api/database/rows/table/1281229/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "baserowTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_field_names",
+              "value": "true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"fecha\": \"={{ $now.toISO() }}\",\n  \"workflow\": \"Seguimiento leads 6.1 - Principal\",\n  \"ejecucion_id\": \"={{ $execution.id }}\",\n  \"ejecucion_url\": \"={{ $execution.resumeUrl || '' }}\",\n  \"nodo\": \"HTTP · Guardar fila Baserow\",\n  \"mensaje\": \"={{ $json.error?.message || $json.message || 'Error desconocido' }}\",\n  \"estado\": \"pendiente_revision\",\n  \"accion\": \"Revisar conectividad con Baserow y reintentar manualmente\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -112,
+        192
+      ],
+      "id": "421a4817-9c43-4c36-9a3a-a7aed00cbc8a",
+      "name": "HTTP Registrar Incidente",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "wTGQSqz86CLYIcUH",
+          "name": "SimonToken"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook Telegram": {
+      "main": [
+        [
+          {
+            "node": "Responder 200 a Telegram",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Responder 200 a Telegram": {
+      "main": [
+        [
+          {
+            "node": "Parsear mensaje",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parsear mensaje": {
+      "main": [
+        [
+          {
+            "node": "Contrato completo?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Contrato completo?": {
+      "main": [
+        [
+          {
+            "node": "PrepararLead'",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Aviso de formato al chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP · Guardar fila Baserow1": {
+      "main": [
+        [
+          {
+            "node": "Confirmar registro al chat",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Registrar Incidente",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PrepararLead'": {
+      "main": [
+        [
+          {
+            "node": "HTTP · Guardar fila Baserow1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Registrar Incidente": {
+      "main": [
+        [
+          {
+            "node": "Aviso de error al registrar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "oSWpJntlL0NuVHO1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "08930252-c02d-4ef5-8690-c553318d310a",
+  "meta": {
+    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+  },
+  "nodeGroups": [],
+  "id": "MK2CNIeFVpC8212B",
+  "tags": []
+}

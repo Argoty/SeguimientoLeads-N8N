@@ -1,0 +1,415 @@
+{
+  "name": "Seguimiento leads 6.2 - Subworkflow_PrepararLead",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "jsonExample",
+        "jsonExample": "{\n    \"nombre\": \"Simón Pedro\",\n    \"correo\": \"simon.perez@gmail.com\",\n    \"interes\": \"\",\n    \"mensaje\": \"\",\n    \"canal\": \"Telegram\",\n    \"chat_id\": 6883810092,\n    \"update_id\": 977491407,\n    \"submittedAt\": \"2026-10-25T03:41:42.000Z\",\n    \"formMode\": \"telegram\"\n}"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        32
+      ],
+      "id": "72e49470-a97e-44dc-b540-3ce046f8268b",
+      "name": "Recivir Lead"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": false,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f119574d-9c5a-42c9-8049-fd913bc9d992",
+              "leftValue": "={{ $json.correo }}",
+              "rightValue": "@gmail",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "475c927b-6a94-4811-ae77-36093a65c3e9",
+              "leftValue": "={{ $json.correo }}",
+              "rightValue": "@hotmail",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            },
+            {
+              "id": "7dd6bb76-1467-4b1f-a3ad-8d02e7d5ca83",
+              "leftValue": "={{ $json.correo }}",
+              "rightValue": "@outlook",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        736,
+        16
+      ],
+      "id": "6c831056-61b8-48bb-857b-7833a5d1a5bf",
+      "name": "¿Es correo empresarial?"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "4fa18375-f604-4bfc-9e08-4951ef079c9c",
+              "name": "es_empresarial",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        -112
+      ],
+      "id": "eb5fbbcf-d23b-4e8c-9f0b-4af54c6d1399",
+      "name": "Empresarial true"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "1f9d647e-8828-4901-a6d5-a3c562a6d840",
+              "name": "es_empresarial",
+              "value": false,
+              "type": "boolean"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        912,
+        96
+      ],
+      "id": "f608c457-11ec-44df-99d3-6b9860120b0e",
+      "name": "Empresarial False"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.interes }}",
+                    "rightValue": "ALTO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "f015021b-5fad-4cab-9e0f-a67e320cd3ab"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "f03d621e-e054-4605-b6d9-f8f97d565bce",
+                    "leftValue": "={{ $json.interes }}",
+                    "rightValue": "MEDIO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": false,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "a500d24f-1ae4-42ee-a441-5e9b5dfd3453",
+                    "leftValue": "={{ $json.interes }}",
+                    "rightValue": "BAJO",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {
+          "ignoreCase": true
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1152,
+        -16
+      ],
+      "id": "3ab799e5-6f5d-405b-9543-f68d41153330",
+      "name": "Casos Interés"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "f0ea1d45-c34d-4e21-a603-44b34e25d906",
+              "name": "accion",
+              "value": "Notificacion inmediata",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        -192
+      ],
+      "id": "3070c7b5-5c16-4e13-9e79-725a14a54685",
+      "name": "Alto"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "92432ee9-ca0f-4260-9e8f-1c5107703655",
+              "name": "accion",
+              "value": "Registrar seguimiento en 2 o 3 dias",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        16
+      ],
+      "id": "475f9f1e-71a9-4e99-9a5c-5aa557d07e96",
+      "name": "Medio"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "231b95ee-1552-4af5-8e81-d74c04ec4731",
+              "name": "accion",
+              "value": "Archivar, contactar en el futuro",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        1392,
+        208
+      ],
+      "id": "5ae811f3-bd34-4eb6-a27d-e3de6953f7e3",
+      "name": "Bajo"
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        1632,
+        16
+      ],
+      "id": "bc9cdbef-b3c9-4610-9abf-c965d2c9c0d6",
+      "name": "Merge"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "¿Es correo empresarial?": {
+      "main": [
+        [
+          {
+            "node": "Empresarial true",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Empresarial False",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Empresarial true": {
+      "main": [
+        [
+          {
+            "node": "Casos Interés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Empresarial False": {
+      "main": [
+        [
+          {
+            "node": "Casos Interés",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Casos Interés": {
+      "main": [
+        [
+          {
+            "node": "Alto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Medio",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Bajo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alto": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Medio": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Bajo": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Recivir Lead": {
+      "main": [
+        [
+          {
+            "node": "¿Es correo empresarial?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "6dbe7ad1-a10a-4290-93f0-81cdafc61bcb",
+  "meta": {
+    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+  },
+  "nodeGroups": [],
+  "id": "9mCuXyvGPH3DIcQT",
+  "tags": []
+}

@@ -1,0 +1,147 @@
+{
+  "name": "Seguimiento leads 6.4 - Lab",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "minutes",
+              "minutesInterval": 1
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -480,
+        -48
+      ],
+      "id": "4b391448-a05f-4b85-9c8a-7228dd45352e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "4b86da14-93f6-4111-bb6d-d5837b3713dc",
+              "leftValue": "={{ $json.forzar_error }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [
+        96,
+        -96
+      ],
+      "id": "550e7a45-d83d-44ad-b4d1-c84362fa730b",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "errorMessage": "Fallo forzado para prueba de Error Trigger"
+      },
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [
+        320,
+        -144
+      ],
+      "id": "3027f1cd-ae36-48e0-a582-70cf2d1ec77f",
+      "name": "Stop and Error"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "af387587-1288-4774-a7e7-cd41fd1a7d3a",
+              "name": "forzar_error",
+              "value": true,
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "6cb64275-cea9-4b68-a89e-3685b006af4e",
+      "name": "Configurar prueba"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Configurar prueba",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Stop and Error",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Configurar prueba": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false,
+    "timeSavedMode": "fixed",
+    "errorWorkflow": "oSWpJntlL0NuVHO1",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "c43e19ea-1f28-494f-a86d-ed3083c7cf12",
+  "meta": {
+    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+  },
+  "nodeGroups": [],
+  "id": "LRNrxkeodnMqIiN3",
+  "tags": []
+}

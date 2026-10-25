@@ -1,0 +1,154 @@
+{
+  "name": "Seguimiento leads 6.3 - Manejador",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [
+        -352,
+        48
+      ],
+      "id": "ccaa1de0-5021-4f6c-a7cf-a4472410b178",
+      "name": "Error Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "16b7ae75-f6ad-470b-8e4a-d5705d8fb6d9",
+              "name": "fecha",
+              "value": "={{ $now.toISO()}}",
+              "type": "string"
+            },
+            {
+              "id": "f18a1b28-00b0-4cbf-8c6e-0e069fe1ce25",
+              "name": "workflow",
+              "value": "={{ $json.workflow.name || 'Workflow no informado' }}",
+              "type": "string"
+            },
+            {
+              "id": "fae59766-f76b-4a36-b716-c88f05fa97c8",
+              "name": "ejecucion_id",
+              "value": "={{ $json.execution?.id || 'no_disponible' }}",
+              "type": "string"
+            },
+            {
+              "id": "d4604e0e-2f42-4e09-9653-492976e1ee9a",
+              "name": "ejecucion_url",
+              "value": "={{ $json.execution?.url || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "0640190f-4542-4c3f-82f5-0e9e7f2c7d65",
+              "name": "nodo",
+              "value": "={{ $json.execution?.lastNodeExecuted || 'No informado' }}",
+              "type": "string"
+            },
+            {
+              "id": "5be8eade-c85f-4d9a-8058-d30a6867ff6d",
+              "name": "mensaje",
+              "value": "={{ $json.execution?.error?.message || 'Error sin mensaje' }}",
+              "type": "string"
+            },
+            {
+              "id": "60f284e7-5d05-4585-a7ee-13d7e49af363",
+              "name": "estado",
+              "value": "pendiente_revision",
+              "type": "string"
+            },
+            {
+              "id": "0a6b56ad-169a-423e-95b1-aace748fb5fa",
+              "name": "accion",
+              "value": "Revisar la ejecución y corregir",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -112,
+        48
+      ],
+      "id": "32ee41db-e156-4d25-b75d-24a7517d8983",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.baserow.io/api/database/rows/table/1281229/",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "baserowTokenApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_field_names",
+              "value": "true"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        128,
+        64
+      ],
+      "id": "a9405b5c-00ef-42e4-8c69-6576d4c137be",
+      "name": "HTTP Request",
+      "credentials": {
+        "baserowTokenApi": {
+          "id": "wTGQSqz86CLYIcUH",
+          "name": "SimonToken"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Error Trigger": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "81b2fd06-addd-4a3d-ab52-304caeadbdcf",
+  "meta": {
+    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+  },
+  "nodeGroups": [],
+  "id": "oSWpJntlL0NuVHO1",
+  "tags": []
+}
