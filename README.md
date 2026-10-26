@@ -15,7 +15,7 @@ Los leads entran por un bot de Telegram, se validan, se clasifican por tipo de c
 
 ## Problema que resuelve
 
-Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, teléfono) sin un proceso centralizado. Nadie sabe cuál es prioritario, los de interés alto se enfrían antes de ser atendidos y el registro manual en una hoja de cálculo produce omisiones y errores de tipeo. Además, cuando falla una integración no queda constancia de que el lead se perdió.
+En el escenario sin automatización, un asesor puede recibir leads por formulario web, WhatsApp, Telegram o teléfono y debe leer los mensajes, copiar los datos a una hoja de cálculo y decidir la prioridad manualmente. Esto puede producir demoras, omisiones y errores de digitación. La solución entregada automatiza la recepción por Telegram y permite registrar incidencias para identificar los fallos de guardado.
 
 ## Alcance actual
 
@@ -30,6 +30,8 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 **Proceso manual**
 
 ![Diagrama del proceso manual](documentacion/diagramas/Diagrama1_Proceso_Manual_Corte2.png)
+
+El diagrama muestra cómo una persona puede gestionar contactos de distintos canales sin automatización. La solución automatizada de esta entrega recibe leads **solo por Telegram**.
 
 **Proceso automatizado**
 
@@ -71,8 +73,8 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 2. En 6.1, abrir el nodo `PrepararLead'` y volver a seleccionar el subworkflow 6.2: al importar, la referencia al ID anterior se pierde.
 3. Reasignar las credenciales en `Aviso de formato al chat`, `Confirmar registro al chat` y `Aviso de error al registrar` (Telegram), y en los tres nodos HTTP (`HTTP · Guardar fila Baserow1`, `HTTP Registrar Incidente` y el `HTTP Request` del manejador), que pueden usar tokens distintos.
 4. Reemplazar los IDs de tabla en las URLs (`/api/database/rows/table/<ID>/`) y conservar la query `user_field_names=true`.
-5. En 6.1 y 6.4: *Settings → Error Workflow* → seleccionar el manejador 6.3. La asociación por ID no sobrevive a la importación.
-6. Activar **solo 6.1**. El 6.3 no se activa: lo invoca n8n como Error Workflow. El 6.4 debe quedar **inactivo** salvo durante la prueba de fallo.
+5. En la instalación utilizada para las pruebas, **publicar primero 6.2 y 6.3**: n8n exigió el subworkflow publicado y deshabilitó el manejador mientras no estaba publicado. En 6.1 y 6.4: *⋯ → Settings → Error Workflow* → seleccionar el manejador 6.3 propio y guardar.
+6. Publicar **6.1** después de configurar sus dependencias. Publicar también cualquier cambio posterior de credenciales o referencias. El 6.3 recibe los errores por Error Trigger; el 6.4 debe quedar **sin publicar** salvo durante la prueba de fallo.
 
 ## Ejecución
 
@@ -100,10 +102,10 @@ Los leads llegan por distintos canales (formulario web, WhatsApp, Telegram, tel�
 
 | Campo | Valor |
 | --- | --- |
-| Entrada | `Prueba Uno \| prueba@empresa.com \| ALTO \| Quiero una agenda de visita` |
+| Entrada | `Prueba Uno \| prueba.uno@empresa.com \| ALTO \| Quiero agendar una visita` |
 | Pasos | Activar 6.1 → `./iniciar_bot.sh` → enviar el mensaje al bot |
 | Resultado esperado | Chat: `Lead registrado: Prueba Uno \| Acción: Notificacion inmediata`. Fila en Baserow con `es_empresarial: true`, `canal: Telegram`, `formMode: test` |
-| Resultado observado | Pendiente de completar con la evidencia |
+| Resultado observado | Subworkflow con `es_empresarial: true` y acción inmediata, fila visible 69 en Baserow y confirmación recibida en Telegram. [Prueba P01 y capturas](documentacion/Bitacora_Unificada_Proyecto.md#p01--caso-normal-empresarial-e-interés-alto). |
 
 **Entrada inválida (automática)**
 
@@ -116,7 +118,7 @@ Enviar `Prueba | sin-arroba | ALTO | mensaje`: `Contrato completo?` corta el flu
 | Pasos | Activar 6.4 → su `Schedule Trigger` corre **cada minuto** → revisar la tabla de incidencias → **desactivar 6.4** |
 | Ejecución | Automática (agendada) |
 | Resultado esperado | `Stop and Error` falla, el manejador 6.3 registra la incidencia con `nodo: Stop and Error` y `estado: pendiente_revision` |
-| Resultado observado | Pendiente de completar con la evidencia |
+| Resultado observado | Ejecución automática 55 del laboratorio fallida en `Stop and Error`; el manejador obtuvo una respuesta de creación de incidencia con ID 5 y `estado: pendiente_revision`. [Prueba P09 y capturas](documentacion/Bitacora_Unificada_Proyecto.md#p09--error-automático-y-manejador-global). |
 
 ## Errores y recuperación
 
@@ -128,7 +130,7 @@ Enviar `Prueba | sin-arroba | ALTO | mensaje`: `Contrato completo?` corta el flu
 
 ## Documentación y evidencias
 
-- Bitácora unificada: `documentacion/Bitacora_Unificada_Proyecto.md` *(pendiente)*
+- [Bitácora unificada cerrada](documentacion/Bitacora_Unificada_Proyecto.md): resultados observados, procedimientos, conclusiones y 22 capturas de la jornada del 25 de octubre de 2026, con sus limitaciones documentadas.
 - Presentación en PDF: `documentacion/Presentacion_Corte_2.pdf` *(pendiente)*
 - Diagramas: [Proceso manual](documentacion/diagramas/Diagrama1_Proceso_Manual_Corte2.png) · [Proceso automatizado](documentacion/diagramas/Diagrama2_Proceso_Automatizado_Corte2.png) · Evidencias: [`documentacion/evidencias/`](documentacion/evidencias) · Workflows: [`workflows/`](workflows)
 
