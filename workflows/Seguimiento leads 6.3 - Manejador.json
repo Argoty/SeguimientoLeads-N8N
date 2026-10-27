@@ -6,10 +6,10 @@
       "type": "n8n-nodes-base.errorTrigger",
       "typeVersion": 1,
       "position": [
-        -352,
-        48
+        0,
+        0
       ],
-      "id": "ccaa1de0-5021-4f6c-a7cf-a4472410b178",
+      "id": "9234e8da-9b65-4e90-af24-ae4affea93ab",
       "name": "Error Trigger"
     },
     {
@@ -71,16 +71,16 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        -112,
-        48
+        240,
+        0
       ],
-      "id": "32ee41db-e156-4d25-b75d-24a7517d8983",
+      "id": "4d7afae9-2325-4069-83b8-e1713f097639",
       "name": "Edit Fields"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.baserow.io/api/database/rows/table/1281229/",
+        "url": "https://api.baserow.io/api/database/rows/table/1282332/",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "baserowTokenApi",
         "sendQuery": true,
@@ -100,15 +100,15 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        128,
-        64
+        480,
+        0
       ],
-      "id": "a9405b5c-00ef-42e4-8c69-6576d4c137be",
+      "id": "7dc04c18-96d8-4b0e-8b25-801ee001a757",
       "name": "HTTP Request",
       "credentials": {
         "baserowTokenApi": {
-          "id": "wTGQSqz86CLYIcUH",
-          "name": "SimonToken"
+          "id": "lthE37Kh2qqKdC4z",
+          "name": "Baserow Token account"
         }
       }
     }
@@ -141,14 +141,13 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "81b2fd06-addd-4a3d-ab52-304caeadbdcf",
+  "versionId": "3a94013b-32ad-4a28-ac39-14e6d8d6def1",
   "meta": {
-    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+    "instanceId": "a7e59317da7985a7de8ef31f5ea7ab9945e350a69420ac509f61cd6e95edc5e3"
   },
   "nodeGroups": [],
-  "id": "oSWpJntlL0NuVHO1",
+  "id": "Vh3rn4FIK4HlDMhU",
   "tags": []
 }

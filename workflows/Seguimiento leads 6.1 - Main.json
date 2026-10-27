@@ -11,10 +11,10 @@
       "type": "n8n-nodes-base.webhook",
       "typeVersion": 2.1,
       "position": [
-        -1680,
-        176
+        0,
+        192
       ],
-      "id": "ab48261b-e886-4521-91f7-e3d9aee05f72",
+      "id": "67ee7d34-7ea6-45ed-86f9-3112ccb3a368",
       "name": "Webhook Telegram",
       "webhookId": "9cbc33e7-083f-4e2c-80a9-1cd414d5d5cc"
     },
@@ -26,10 +26,10 @@
       "type": "n8n-nodes-base.respondToWebhook",
       "typeVersion": 1.1,
       "position": [
-        -1440,
-        176
+        240,
+        192
       ],
-      "id": "09336704-c241-42e7-a7ad-1d2dc1062dd6",
+      "id": "651e521c-c1c9-4c8d-b84b-978e86bdf2ee",
       "name": "Responder 200 a Telegram"
     },
     {
@@ -39,10 +39,10 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        -1248,
-        192
+        432,
+        208
       ],
-      "id": "dc07d4f0-7597-4fdc-b600-efc14dc601e3",
+      "id": "b9c1fa4c-28ed-4149-a3a4-cb3297866c20",
       "name": "Parsear mensaje"
     },
     {
@@ -112,10 +112,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1008,
-        208
+        672,
+        224
       ],
-      "id": "43bde216-951e-4483-9786-f3ac1e81e2fa",
+      "id": "e8ceb696-beae-47e2-8dbb-19d41a463c15",
       "name": "Contrato completo?"
     },
     {
@@ -129,15 +129,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -784,
-        400
+        896,
+        416
       ],
-      "id": "806aed2f-9b41-4a46-8db8-4854a1c3affc",
+      "id": "270afd27-8274-424d-b088-4e9ababc9fb7",
       "name": "Aviso de formato al chat",
       "webhookId": "c77afe63-8f68-4acd-9bcc-4bc429bf93bc",
       "credentials": {
         "telegramApi": {
-          "id": "BLgvTGMCb9hctWeW",
+          "id": "LVWsq68X03InMDcb",
           "name": "Telegram account"
         }
       }
@@ -153,15 +153,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        -128,
-        -16
+        1552,
+        0
       ],
-      "id": "19124752-d9b0-4a30-b379-022d1f2f164e",
+      "id": "b6e2bf13-a7a9-4981-bc99-3c00e56f04d6",
       "name": "Confirmar registro al chat",
       "webhookId": "f56781f6-2200-4176-a2f1-28b8117f24ab",
       "credentials": {
         "telegramApi": {
-          "id": "BLgvTGMCb9hctWeW",
+          "id": "LVWsq68X03InMDcb",
           "name": "Telegram account"
         }
       }
@@ -186,20 +186,20 @@
         "jsonBody": "={{ JSON.stringify({ nombre: $json.nombre, correo: $json.correo, interes: $json.interes, mensaje: $json.mensaje, canal: $json.canal, submittedAt: $json.submittedAt, formMode: 'test', es_empresarial: $json.es_empresarial, accion: $json.accion }) }}",
         "options": {}
       },
-      "id": "3f06414c-3568-41da-8afd-d4667913956e",
+      "id": "05a81d36-10e9-422c-af9c-6187f05a1558",
       "name": "HTTP · Guardar fila Baserow1",
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.2,
       "position": [
-        -448,
-        112
+        1232,
+        128
       ],
       "retryOnFail": true,
       "waitBetweenTries": 2000,
       "maxTries": 2,
       "credentials": {
         "baserowTokenApi": {
-          "id": "KnXmUnGESIpYaBbw",
+          "id": "lthE37Kh2qqKdC4z",
           "name": "Baserow Token account"
         }
       },
@@ -209,9 +209,9 @@
       "parameters": {
         "workflowId": {
           "__rl": true,
-          "value": "9mCuXyvGPH3DIcQT",
+          "value": "GxDZlth0DF976v72",
           "mode": "list",
-          "cachedResultUrl": "/workflow/9mCuXyvGPH3DIcQT",
+          "cachedResultUrl": "/workflow/GxDZlth0DF976v72",
           "cachedResultName": "Seguimiento leads 6.2 - Subworkflow_PrepararLead"
         },
         "workflowInputs": {
@@ -328,10 +328,10 @@
       "type": "n8n-nodes-base.executeWorkflow",
       "typeVersion": 1.3,
       "position": [
-        -784,
-        112
+        896,
+        128
       ],
-      "id": "b0489067-008e-4198-a83c-8345b065b365",
+      "id": "fefa158a-1ebc-4daa-9e34-2d35c0088c93",
       "name": "PrepararLead'"
     },
     {
@@ -345,15 +345,15 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        192,
-        208
+        1872,
+        224
       ],
-      "id": "871c09e9-5d45-47ca-b814-d526ea77c6e8",
+      "id": "1d5b7d60-b734-493f-a655-c646de9d0f01",
       "name": "Aviso de error al registrar",
       "webhookId": "c77afe63-8f68-4acd-9bcc-4bc429bf93bc",
       "credentials": {
         "telegramApi": {
-          "id": "BLgvTGMCb9hctWeW",
+          "id": "LVWsq68X03InMDcb",
           "name": "Telegram account"
         }
       }
@@ -361,7 +361,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.baserow.io/api/database/rows/table/1281229/",
+        "url": "https://api.baserow.io/api/database/rows/table/1282332/",
         "authentication": "predefinedCredentialType",
         "nodeCredentialType": "baserowTokenApi",
         "sendQuery": true,
@@ -381,15 +381,15 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.5,
       "position": [
-        -112,
-        192
+        1568,
+        208
       ],
-      "id": "421a4817-9c43-4c36-9a3a-a7aed00cbc8a",
+      "id": "fb828e52-5209-42ab-b7c2-380db806b42d",
       "name": "HTTP Registrar Incidente",
       "credentials": {
         "baserowTokenApi": {
-          "id": "wTGQSqz86CLYIcUH",
-          "name": "SimonToken"
+          "id": "lthE37Kh2qqKdC4z",
+          "name": "Baserow Token account"
         }
       }
     }
@@ -491,17 +491,13 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false,
-    "timeSavedMode": "fixed",
-    "errorWorkflow": "oSWpJntlL0NuVHO1",
-    "callerPolicy": "workflowsFromSameOwner"
+    "binaryMode": "separate"
   },
-  "versionId": "08930252-c02d-4ef5-8690-c553318d310a",
+  "versionId": "ce30e92d-c1ff-4cde-a3af-ec7fae2f665e",
   "meta": {
-    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+    "instanceId": "a7e59317da7985a7de8ef31f5ea7ab9945e350a69420ac509f61cd6e95edc5e3"
   },
   "nodeGroups": [],
-  "id": "MK2CNIeFVpC8212B",
+  "id": "GRulfo4U6gWr0wOi",
   "tags": []
 }

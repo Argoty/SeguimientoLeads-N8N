@@ -9,10 +9,10 @@
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.2,
       "position": [
-        384,
-        32
+        -672,
+        -96
       ],
-      "id": "72e49470-a97e-44dc-b540-3ce046f8268b",
+      "id": "c1696311-5f19-4e12-9945-d81c20ccb816",
       "name": "Recivir Lead"
     },
     {
@@ -62,10 +62,10 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        736,
-        16
+        -320,
+        -112
       ],
-      "id": "6c831056-61b8-48bb-857b-7833a5d1a5bf",
+      "id": "4d52e609-1109-412e-bec6-5731b183da84",
       "name": "¿Es correo empresarial?"
     },
     {
@@ -86,10 +86,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        912,
-        -112
+        -144,
+        -240
       ],
-      "id": "eb5fbbcf-d23b-4e8c-9f0b-4af54c6d1399",
+      "id": "c75fc4b2-ff6b-4a9f-9711-8d6c1078a7e7",
       "name": "Empresarial true"
     },
     {
@@ -110,10 +110,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        912,
-        96
+        -144,
+        -32
       ],
-      "id": "f608c457-11ec-44df-99d3-6b9860120b0e",
+      "id": "6fa8220e-95ad-4529-8b9e-cde09982f83b",
       "name": "Empresarial False"
     },
     {
@@ -195,10 +195,10 @@
       "type": "n8n-nodes-base.switch",
       "typeVersion": 3.4,
       "position": [
-        1152,
-        -16
+        96,
+        -144
       ],
-      "id": "3ab799e5-6f5d-405b-9543-f68d41153330",
+      "id": "492edd79-cfe2-4106-902a-443d6b602e7b",
       "name": "Casos Interés"
     },
     {
@@ -219,10 +219,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1392,
-        -192
+        336,
+        -320
       ],
-      "id": "3070c7b5-5c16-4e13-9e79-725a14a54685",
+      "id": "8066473c-79d5-48ad-9266-e7941b2bcec2",
       "name": "Alto"
     },
     {
@@ -243,10 +243,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1392,
-        16
+        336,
+        -112
       ],
-      "id": "475f9f1e-71a9-4e99-9a5c-5aa557d07e96",
+      "id": "4028cdc3-d281-4231-9471-06be89eed855",
       "name": "Medio"
     },
     {
@@ -267,10 +267,10 @@
       "type": "n8n-nodes-base.set",
       "typeVersion": 3.5,
       "position": [
-        1392,
-        208
+        336,
+        80
       ],
-      "id": "5ae811f3-bd34-4eb6-a27d-e3de6953f7e3",
+      "id": "1e2fe0f3-9257-4725-b7f7-8ef9450471e2",
       "name": "Bajo"
     },
     {
@@ -280,10 +280,10 @@
       "type": "n8n-nodes-base.merge",
       "typeVersion": 3.2,
       "position": [
-        1632,
-        16
+        576,
+        -112
       ],
-      "id": "bc9cdbef-b3c9-4610-9abf-c965d2c9c0d6",
+      "id": "ffcbf3c3-58f4-4efd-89ec-1964fd8a8c8a",
       "name": "Merge"
     }
   ],
@@ -402,14 +402,13 @@
   "active": true,
   "settings": {
     "executionOrder": "v1",
-    "binaryMode": "separate",
-    "availableInMCP": false
+    "binaryMode": "separate"
   },
-  "versionId": "6dbe7ad1-a10a-4290-93f0-81cdafc61bcb",
+  "versionId": "47ac9af1-b66d-455e-9d6e-05c2bfc5703a",
   "meta": {
-    "instanceId": "a03636fe52fff698d22706dec927326f5bdfe16f34d7da8b1e8a342efdf1de81"
+    "instanceId": "a7e59317da7985a7de8ef31f5ea7ab9945e350a69420ac509f61cd6e95edc5e3"
   },
   "nodeGroups": [],
-  "id": "9mCuXyvGPH3DIcQT",
+  "id": "GxDZlth0DF976v72",
   "tags": []
 }
