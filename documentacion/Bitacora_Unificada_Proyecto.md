@@ -4,21 +4,19 @@
 
 **Institución:** EAM
 
-**Periodo:** 2026 II — Segundo corte
+**Periodo:** 2026 II — Segundo y tercer corte
 
 **Organización del caso:** Inmuebles y Apartamentos Inmonova S.A.S
 
 **Jornada de pruebas y cierre documental:** 25 de octubre de 2026, fecha local de las capturas
 
-**Estado:** cerrada documentalmente para el segundo corte, con limitaciones registradas
+**Estado:** segundo corte cerrado documentalmente, con limitaciones registradas; tercer corte (Clase 07) en progreso, ver sección 12
 
 **Responsable de pruebas y consolidación:** Luis Eduardo Sinisterra Montaño
 
-**Versión documentada:** workflows 6.1, 6.2, 6.3 y 6.4, reconfigurados en la instalación local para las pruebas
+**Versión documentada:** workflows 6.1, 6.2, 6.3 y 6.4, reconfigurados en la instalación local para las pruebas (segundo corte), y workflow 7.0 con agente de IA (Clase 07, 2 de noviembre de 2026)
 
 **Repositorio:** <https://github.com/Argoty/SeguimientoLeads-N8N>
-
-> **Cierre documental:** se revisaron e incorporaron 22 capturas reales de Telegram, n8n y Baserow. La sección 8 relaciona entradas, pasos, resultados y conclusiones de las pruebas realizadas. El cierre deja constancia del funcionamiento demostrado y de sus limitaciones; no equivale a una aprobación del docente ni a una certificación de producción.
 
 ## 1. Integrantes y responsabilidades
 
@@ -55,6 +53,8 @@ Centralizar los leads recibidos por un bot de Telegram, validar sus datos, asign
 - Manejador global asociado al principal y al laboratorio de fallos.
 
 No se incluyen WhatsApp Business API, un panel de métricas, autenticación de usuarios finales, consulta o edición de leads, deduplicación por `update_id` ni una agenda automática de contactos. Las acciones comerciales son textos asignados al registro: no implican que se haya programado una llamada, archivado el contacto o enviado una alerta independiente al asesor.
+
+> **Nota del tercer corte:** el alcance anterior corresponde a la versión 6.1. Desde la Clase 07 la entrada por Telegram es conversacional y ya no exige el formato con barras verticales; ver la sección 12.
 
 ## 3. Proceso manual y proceso automatizado
 
@@ -96,8 +96,9 @@ El diagrama representa el escenario de una persona que gestiona los contactos si
 | [6.2 — PrepararLead](<../workflows/Seguimiento leads 6.2 - Subworkflow_PrepararLead.json>) | Clasificar el correo y asignar la acción por interés. | Los nueve campos del lead. | El lead con `es_empresarial` y `accion`. |
 | [6.3 — Manejador](<../workflows/Seguimiento leads 6.3 - Manejador.json>) | Preparar y guardar el registro de un fallo automático no controlado. | Metadatos recibidos por Error Trigger. | Petición de creación de una incidencia en Baserow. |
 | [6.4 — Lab](<../workflows/Seguimiento leads 6.4 - Lab.json>) | Provocar un fallo para comprobar la asociación del manejador. | Ejecución programada cada minuto durante la prueba. | Error intencional de `Stop and Error`. |
+| [7.0 — Main](<../workflows/Seguimiento leads 7.0 - Main.json>) | Conversar con el usuario mediante un agente de IA, validar su salida, llamar a 6.2, guardar y responder. | Update de Telegram por `POST /webhook/tg-leads`. | Pregunta al chat, o registro y confirmación, o ruta de error. Ver la sección 12. |
 
-La separación permite mantener la clasificación fuera de la orquestación y utilizar un manejador común. El laboratorio es independiente del registro normal de leads y debe permanecer inactivo fuera de la prueba.
+La separación permite mantener la clasificación fuera de la orquestación y utilizar un manejador común. El laboratorio es independiente del registro normal de leads y debe permanecer inactivo fuera de la prueba. La versión 7.0 reutiliza 6.2, pero no usa 6.3 ni 6.4 (sección 12.6).
 
 ## 5. Datos, transformaciones y decisiones
 
@@ -465,6 +466,8 @@ El [diagrama conservado del primer corte](diagramas/Flujo_Manual_Automatizo_Cort
 
 La versión actual incorpora entrada por Telegram, conectividad mediante túnel, validación previa, separación de la clasificación en 6.2, escritura HTTP en Baserow, respuestas al chat, ruta local de error, manejador global y laboratorio automático. La jornada del 25 de octubre de 2026 documenta estos resultados en la instalación local; no se reconstruyen fechas ni aportes históricos que no estén respaldados por información del equipo.
 
+En el tercer corte, la Clase 07 del 9 de noviembre de 2026 reemplaza el formato fijo por un agente de IA con memoria y agrega una capa de validación del JSON que este devuelve. El detalle está en la sección 12.
+
 ### 9.2. Decisiones técnicas
 
 - **Telegram como entrada actual:** permite una demostración por mensajes con un formato definido.
@@ -499,14 +502,23 @@ La distribución general figura en la sección 1. Los aportes comprobados durant
 | --- | --- | --- | --- |
 | 25/10/2026, fecha local | Luis Eduardo Sinisterra Montaño | Configuración local, reasignación de referencias y credenciales, ejecución de casos normales e inválidos, laboratorio automático, fallo local y recuperación; captura y organización de evidencias. | Los 22 archivos de `documentacion/evidencias/`, relacionados en la sección 8. |
 | Cierre de la misma jornada | Luis Eduardo Sinisterra Montaño, con apoyo de IA | Solicitud de consolidación de resultados, revisión de capturas y cierre de la bitácora unificada. | Esta bitácora y sus referencias relativas. |
+| 09/11/2026, Clase 07 | Johan Steven Hernández Torres | Actualizar la ficha del proyecto y redactar la bitácora de la Clase 07. | `Ficha_Proyecto.md` y `C07_2026-11-09_Agente_IA_Telegram.md`, según C07. |
+| 09/11/2026, Clase 07 | Javier Leonardo Argoty Roa | Integrar el agente, la memoria y el nodo de validación en el workflow 7.0. | `Seguimiento leads 7.0 - Main.json`, revisado en 12.6. |
+| 09/11/2026, Clase 07 | Luis Eduardo Sinisterra Montaño | Conversar con el bot en Telegram y verificar las filas en Baserow. | Capturas declaradas en C07; **[Pendiente de adjuntar]**, ver 12.7. |
+| 09/11/2026, Clase 07 | Simón David Cruz Suazo | Actualizar la carpeta de Drive y mantener el script `iniciar_bot.sh`. | Workflows, script y evidencias en la bóveda, según C07; no verificado en esta revisión. |
+| 09/11/2026, Clase 07 | Luis Eduardo Sinisterra Montaño, con apoyo de IA | Consolidar C07 en esta bitácora y contrastarla con el JSON 7.0. | Sección 12 de esta bitácora. |
 
-Las funciones de Johan, Javier y Simón se conservan como responsabilidades declaradas; no se les atribuyen ejecuciones concretas sin registro adicional.
+Las funciones de Johan, Javier y Simón se conservan como responsabilidades declaradas; no se les atribuyen ejecuciones concretas sin registro adicional. Los aportes del 09/11/2026 son los declarados en C07 y su respaldo está en la sección 12.
+
+La declaración de uso de IA de la Clase 07 (Claude y Google Gemini) está en la sección 12.9.
 
 Para preparar esta versión se utilizó un asistente de IA en OpenCode como apoyo para revisar el repositorio, contrastarlo con la guía del segundo corte y estructurar la bitácora. La revisión se apoyó en la lectura de los JSON, el README, los diagramas y el material de clase; además, se realizaron las comprobaciones locales descritas en 8.1.
 
 La IA acompañó el diagnóstico y la secuencia de pruebas; Luis ejecutó las acciones en n8n, Telegram y Baserow y aportó las capturas. Para el cierre se revisaron las 22 imágenes y se contrastaron sus valores con las reglas de los JSON. Se conservan expresamente los límites de evidencia de P05, P07A, P09 y P10. La captura P08 se editó únicamente para ocultar el enlace firmado de reanudación, sin alterar el error ni los resultados del registro.
 
 ## 11. Estado final y acta de cierre documental
+
+> **Alcance:** esta acta cierra la jornada de pruebas del segundo corte (versión 6.x). No cubre la versión 7.0 de la Clase 07, cuyo estado, hallazgos y pendientes están en la sección 12.
 
 ### Implementado en los archivos entregados
 
@@ -540,7 +552,196 @@ La cobertura documentada permite distinguir un lead registrado, una entrada rech
 
 Los beneficios esperados son menor digitación manual, reglas de clasificación uniformes y mayor trazabilidad. No se reportan porcentajes de ahorro ni mejoras medidas porque no hay una medición adjunta que los respalde.
 
-## 12. Referencias
+## 12. Tercer corte — Clase 07: agente de IA conversacional por Telegram
+
+> **Estado:** en progreso. Esta sección incorpora la bitácora de clase `C07_2026-11-09_Agente_IA_Telegram` y la contrasta con el JSON exportado `Seguimiento leads 7.0 - Main`. Las secciones 1 a 11 documentan el segundo corte (versión 6.x) y se conservan sin cambios en sus resultados. Los puntos marcados como **[Pendiente]** no tienen evidencia adjunta y no deben leerse como probados.
+
+### 12.1. Datos de la sesión
+
+| Campo | Registro |
+| --- | --- |
+| Clase y fecha | Clase 07, 9 de noviembre de 2026, tercer corte. |
+| Tema | Agente de IA conversacional para captar leads por Telegram. |
+| Objetivo | Reemplazar el formato rígido `Nombre \| correo \| ALTO, MEDIO o BAJO \| mensaje` por un agente con memoria que converse en lenguaje natural, reúna los datos del lead y los guarde en Baserow solo cuando estén completos y validados. |
+| Hora de inicio y cierre | **[Pendiente]** no registradas en C07. |
+| Workflow resultante | `Seguimiento leads 7.0 - Main`, que reutiliza el subworkflow 6.2 sin cambios. |
+
+**Roles de la clase.** En C07 los roles rotaron respecto al segundo corte (sección 1):
+
+| Integrante | Rol en C07 | Responsabilidad | Aporte declarado |
+| --- | --- | --- | --- |
+| Johan Steven Hernández Torres | Documentación | Actualizar la ficha del proyecto y redactar la bitácora de clase. | `Ficha_Proyecto.md` actualizada y la nota C07. |
+| Javier Leonardo Argoty Roa | Desarrollo del workflow | Integrar el agente, la memoria y el nodo que valida la respuesta. | Workflow 7.0 exportado. |
+| Luis Eduardo Sinisterra Montaño | Pruebas | Conversar con el bot y verificar las filas en Baserow. | Capturas del chat y de la tabla **[Pendiente de adjuntar]**. |
+| Simón David Cruz Suazo | Gestor de bóveda | Actualizar la carpeta de Drive y mantener `iniciar_bot.sh`. | Workflows, script y evidencias en la bóveda. |
+
+### 12.2. Flujo de la versión 7.0
+
+```text
+Webhook Telegram
+    → Responder 200 a Telegram
+    → Agente de captación de leads (Gemini + Simple Memory)
+          ├─ salida normal → Parsear mensaje → Contrato completo?
+          │        ├─ verdadero → PrepararLead' (6.2) → HTTP · Guardar fila Baserow1
+          │        │                 ├─ éxito → Confirmar registro al chat
+          │        │                 └─ error → HTTP Registrar Incidente → Aviso de error al registrar
+          │        └─ falso → Responder conversación al chat
+          └─ salida de error → Fallo del agente
+```
+
+| Nodo | Función |
+| --- | --- |
+| Webhook Telegram | Recibe cada mensaje en `POST /webhook/tg-leads`. |
+| Responder 200 a Telegram | Responde HTTP 200 antes de ejecutar el agente, para que Telegram no reintente mientras el modelo piensa. |
+| Agente de captación de leads | Conversa en español, recopila nombre, correo, interés y mensaje, y devuelve siempre un JSON. Su entrada es el texto del mensaje de Telegram. |
+| Simple Memory | Ventana de 10 mensajes con clave `lead:<chat_id>:<from_id>`, que separa las conversaciones por chat y usuario. |
+| Google Gemini Chat Model | Modelo de lenguaje del agente. |
+| Parsear mensaje | Hace `JSON.parse` de la salida, valida estado y estructura, normaliza textos y agrega los metadatos desde el evento real de Telegram. |
+| Contrato completo? | Condición única que deja pasar solo los leads listos y válidos. |
+| PrepararLead' | Llama al subworkflow 6.2, que calcula `es_empresarial` y `accion`. |
+| HTTP · Guardar fila Baserow1 | Crea la fila por la API, con 2 intentos totales y salida de error propia. |
+| Confirmar registro al chat | Agradece al usuario por su nombre. |
+| Responder conversación al chat | Envía la pregunta de `respuesta_usuario` cuando el contrato no está completo. |
+| HTTP Registrar Incidente y Aviso de error al registrar | Rama de error del guardado, heredada de 6.1. |
+| Fallo del agente | Destino de la salida de error del agente (ver 12.6). |
+
+### 12.3. Contrato entre el agente y n8n
+
+El agente devuelve únicamente un objeto JSON con esta estructura:
+
+```json
+{
+  "estado": "recopilando",
+  "lead": { "nombre": null, "correo": null, "interes": null, "mensaje": null },
+  "faltantes": [],
+  "respuesta_usuario": ""
+}
+```
+
+| Estado | Significado | Qué hace n8n |
+| --- | --- | --- |
+| `recopilando` | Faltan datos o hay información ambigua. `faltantes` nombra los campos y `respuesta_usuario` trae la pregunta. | El If toma la salida falsa y el bot envía la pregunta por Telegram. No se guarda nada. |
+| `listo` | Nombre, correo, interés y mensaje están completos y son coherentes. `respuesta_usuario` va vacío. | Si el If también lo valida, llama a 6.2, guarda en Baserow y confirma. |
+| `sin_registro` | El mensaje no requiere un lead, por ejemplo un agradecimiento posterior al cierre. | No se guarda; el bot envía la respuesta breve del agente. |
+
+**Reparto de responsabilidades.** El agente solo recopila y clasifica el interés. n8n asigna `canal`, `chat_id`, `update_id`, `submittedAt` y `formMode` desde el evento real, y el subworkflow 6.2 calcula `es_empresarial` y `accion`. El prompt le prohíbe al modelo generar esos valores.
+
+**Validación en dos capas.**
+
+1. *Parsear mensaje* lanza un error con mensaje claro si la salida no es un JSON válido, si el estado no es uno de los tres permitidos, si falta el objeto `lead`, si un campo no es texto o `null`, o si el evento no trae `chat.id`.
+2. *Contrato completo?* exige `estado === 'listo'`, nombre y mensaje no vacíos, correo que cumpla la expresión regular `^[^\s@]+@[^\s@]+\.[^\s@]+$`, interés dentro de `ALTO`, `MEDIO` o `BAJO`, y `chat_id` presente.
+
+### 12.4. Cambios de 6.1 a 7.0
+
+| Componente | En 6.1 | En 7.0 |
+| --- | --- | --- |
+| Entrada del usuario | Texto con barras verticales y formato fijo. | Lenguaje natural, en varios mensajes. |
+| Después del 200 | Parsear mensaje (Code que separa por `\|`). | Agente de captación de leads. |
+| Parsear mensaje | Separa el texto y normaliza. | Valida el JSON del agente y toma los metadatos del evento. |
+| Contrato completo? | Cinco condiciones; el correo solo debe contener `@`. | Una expresión que valida estado, nombre, correo con regex, interés, mensaje y `chat_id`. |
+| Rama falsa del If | Aviso de formato incorrecto. | Responder conversación al chat, con la pregunta del agente. |
+| Confirmación al chat | `Lead registrado: <nombre> \| Acción: <accion>`. | Agradecimiento con el nombre, sin mostrar la acción. |
+| Error del agente | No existía. | Salida de error hacia `Fallo del agente`. |
+| Subworkflow 6.2 | Se llama igual. | Sin cambios, reutilizado. |
+| Rama de incidentes del guardado | Presente. | Heredada sin cambios. |
+| Manejador 6.3 y laboratorio 6.4 | Asociados a 6.1 y 6.4. | No se usan; ver 12.6. |
+
+La validación del correo por regex en 7.0 mejora la limitación registrada en las secciones 7.1 y 11, donde un correo como `@` superaba la condición. Sigue sin comprobar que el dominio exista.
+
+### 12.5. Decisiones técnicas
+
+| Decisión | Razón | Alternativa descartada |
+| --- | --- | --- |
+| Agente de IA con lenguaje natural | El usuario no necesita conocer el formato ni los nombres de los campos. | Mantener el parseo por `\|` de 6.1. |
+| El agente solo recopila y devuelve un JSON con contrato fijo | Reduce el riesgo de que la IA invente valores y deja las reglas de negocio en nodos predecibles. | Que el agente genere todos los campos, incluida la acción. |
+| `es_empresarial` y `accion` se calculan en n8n | Son reglas deterministas que ya existían en 6.2. | Pedírselas al agente. |
+| Validar la salida con un Code y un If antes de guardar | La salida de un modelo puede venir mal formada o incompleta. | Conectar el agente directo a Baserow. |
+| Metadatos tomados del evento de Telegram | Son datos reales que no deben depender del modelo. | Pedirlos al agente dentro del JSON. |
+| Simple Memory con clave `lead:chat_id:from_id` y ventana de 10 | Separa conversaciones y evita repetir preguntas. | Agente sin memoria. |
+| Responder 200 antes del agente | Telegram reintenta si no recibe respuesta rápida y el agente tarda más que un nodo normal. | Responder al final del flujo. |
+| Reutilizar 6.2 y la rama de incidentes de 6.1 | Evita duplicar lógica ya probada. | Reescribir la clasificación en el principal. |
+| Exponer n8n con cloudflared y registrar el webhook con `iniciar_bot.sh` | Telegram exige una URL pública https y la URL del túnel cambia en cada arranque. | Registrar el webhook a mano cada vez. |
+
+### 12.6. Verificación del JSON exportado contra C07
+
+Se leyó `Seguimiento leads 7.0 - Main.json` y se contrastó con lo declarado en C07. Esto acredita la configuración exportada; no acredita su comportamiento en ejecución.
+
+**Coincide con lo declarado:** el orden Webhook → 200 → agente; el modelo Gemini y la memoria con ventana de 10 y clave por chat y usuario; el prompt con los tres estados y la prohibición de generar metadatos, `es_empresarial` y `accion`; la validación en dos capas descrita en 12.3; el guardado con 2 intentos totales, 2 segundos de espera y salida de error; la rama de incidentes; la salida de error del agente conectada a `Fallo del agente`; y el uso de 6.2 como subworkflow.
+
+**Hallazgos para registrar o corregir:**
+
+1. **`Fallo del agente` no avisa al usuario.** Es un nodo Code sin conexión posterior. Si falla el modelo o la credencial, el usuario no recibe ningún mensaje. Esto confirma la duda que C07 deja abierta en su sección de aprendizajes.
+2. **Texto heredado de otro ejercicio.** El mensaje de ese nodo habla de una «consulta de prueba» y dice «No se modificó ningún inventario», lo cual no corresponde a un proyecto de leads.
+3. **7.0 no tiene Error Workflow asociado.** Sus ajustes solo incluyen `executionOrder` y `binaryMode`. Un error lanzado por `Parsear mensaje` (JSON inválido, estado no permitido) detiene la ejecución sin crear incidencia y sin responder al chat. C07 explica por qué no se usa 6.3, pero el error claro del parser solo queda visible en el historial de ejecuciones.
+4. **La incidencia heredada conserva los defectos de 6.1.** El cuerpo de `HTTP Registrar Incidente` sigue con los signos `=` sobrantes, el nombre fijo `Seguimiento leads 6.1 - Principal` (que ya no coincide con el workflow 7.0), el nodo `HTTP · Guardar fila Baserow` y la URL de reanudación (secciones 7.2 y 11).
+5. **`formMode: 'test'` fijo al guardar**, igual que en 6.1, aunque el parser asigna `telegram`.
+6. **La confirmación ya no informa la acción.** En 6.1 el chat mostraba la acción asignada y varias evidencias del segundo corte (P03, P05) se apoyaban en ese texto. En 7.0 la acción solo se puede verificar en la fila de Baserow.
+7. **Misma ruta de webhook.** 7.0 usa `/webhook/tg-leads`, igual que 6.1. **[A verificar]** que 6.1 esté despublicado antes de publicar 7.0, porque ambos no pueden escuchar la misma ruta y método a la vez.
+8. **Memoria y cierre del lead.** La memoria se mantiene en n8n y el prompt considera finalizado un lead tras `listo`. Si luego falla el guardado en Baserow, el usuario recibe el aviso de revisión, pero el agente ya cerró esa conversación. **[A verificar]** el comportamiento tras reiniciar n8n.
+
+### 12.7. Criterios de aceptación y evidencias
+
+Los criterios vienen de C07 y siguen sin marcar porque no hay evidencia adjunta que los respalde.
+
+- [ ] El agente reúne nombre, correo, interés y mensaje a lo largo de varios mensajes, sin exigir un formato fijo.
+- [ ] Solo se guarda un lead en Baserow cuando el estado es `listo` y el contrato pasa la validación.
+- [ ] Si faltan datos o hay ambigüedad, el bot pregunta por Telegram lo que falta sin guardar nada.
+- [ ] Canal, `chat_id`, fecha y `formMode` los asigna n8n y no la IA.
+- [ ] Un error al guardar en Baserow genera un incidente y un aviso al usuario.
+
+| Tipo | Descripción | Ruta o referencia | Estado |
+| --- | --- | --- | --- |
+| Código | Workflow principal con agente, memoria y validación. | `workflows/Seguimiento leads 7.0 - Main.json` | Exportado y revisado en 12.6. |
+| Código | Subworkflow reutilizado. | `workflows/Seguimiento leads 6.2 - Subworkflow_PrepararLead.json` | Sin cambios. |
+| Código | Script del túnel y del webhook. | `workflows/iniciar_bot.sh` | No incluido en esta revisión. |
+| Captura | Vista general del workflow 7.0 en el canvas. | `evidencias/Workflow_07_Canvas.png` | **[Pendiente]** |
+| Captura | Conversación en Telegram donde el agente pide los datos faltantes. | `evidencias/Telegram_Conversacion_Agente.png` | **[Pendiente]** |
+| Captura | Confirmación del registro en Telegram. | `evidencias/Telegram_Confirmacion.png` | **[Pendiente]** |
+| Captura | Fila creada en la tabla de leads de Baserow. | `evidencias/Baserow_Lead_Telegram.png` | **[Pendiente]** |
+| Captura | Ejecución del agente con los pasos intermedios. | `evidencias/Ejecucion_Agente.png` | **[Pendiente]** |
+
+Las rutas de las capturas son las propuestas por C07 (`[[...]]`) adaptadas a la carpeta `evidencias/` de esta bitácora. Deben confirmarse al subir los archivos.
+
+### 12.8. Problemas y soluciones
+
+| Problema | Causa | Solución aplicada | Verificación |
+| --- | --- | --- | --- |
+| La respuesta del agente puede no ser un JSON válido o traer un estado no previsto. | Un modelo de lenguaje no garantiza el formato aunque el prompt lo exija. | `Parsear mensaje` hace `JSON.parse`, revisa estado y estructura y lanza un error claro. | **[Pendiente]** ejecución con una salida inválida y el OUTPUT del error. |
+| El agente podía marcar un lead como listo con datos incompletos o incorrectos. | La decisión de «listo» la toma el modelo y puede equivocarse. | `Contrato completo?` revalida nombre, correo con regex, interés, mensaje y `chat_id`. | **[Pendiente]** prueba con un correo mal escrito y comprobación de que no se creó fila. |
+| Los metadatos no deben depender de la IA. | El modelo no accede al evento real y podría inventar valores. | Se agregan desde el evento del webhook y el prompt le prohíbe generarlos. | **[Pendiente]** comparar `chat_id` y fecha del OUTPUT con el evento de Telegram. |
+| Telegram no puede llamar a n8n local. | Telegram exige una URL pública https. | cloudflared y `iniciar_bot.sh`, que detecta la URL del túnel y ejecuta `setWebhook`. | **[Pendiente]** respuesta `"ok":true` y mensaje de prueba recibido en n8n. |
+| El agente no debe bloquear el flujo si falla. | El modelo o la credencial pueden fallar y detener la ejecución. | Salida de error del agente hacia `Fallo del agente`. | **[Pendiente]** ejecución forzando un fallo del modelo. Ver el hallazgo 1 de 12.6. |
+
+### 12.9. Uso de inteligencia artificial
+
+| Herramienta | Objetivo | Qué se utilizó | Cómo se verificó | Qué se modificó |
+| --- | --- | --- | --- | --- |
+| Claude (Anthropic) | Orientación para diseñar el contrato JSON del agente, el prompt de sistema y la validación de su respuesta. | Estructura del prompt, estados `recopilando`, `listo` y `sin_registro`, y la lógica del nodo de validación. | C07 declara pruebas con conversaciones reales y revisión del OUTPUT de cada nodo y de Baserow; **[Pendiente]** la evidencia (12.7). | Se adaptó el prompt a Inmonova, a los campos del proyecto y a las reglas de interés. |
+| Google Gemini | Modelo del agente de captación, como parte del producto y no como ayuda de desarrollo. | Conversación con el usuario y extracción de nombre, correo, interés y mensaje. | Se revisó que la salida respete el JSON y que la validación bloquee las incompletas. | Se limitó con el prompt y con la validación en n8n para que no genere metadatos ni acciones. |
+
+La integración de C07 en esta bitácora se redactó con apoyo de un asistente de IA, que leyó C07, esta bitácora y los JSON exportados. El equipo debe revisar la sección antes de entregarla.
+
+### 12.10. Aprendizajes, dudas y pendientes de la clase
+
+**Aprendizajes declarados en C07**
+
+- Un agente de IA debe tratarse como una fuente no confiable: su salida se valida con nodos deterministas antes de un paso con efectos reales, como guardar en una base de datos.
+- La memoria de ventana permite acumular los datos de un lead en varios mensajes, siempre que la clave de sesión separe bien cada conversación.
+- Para recibir mensajes de Telegram en un n8n local se necesita un túnel público y registrar el webhook cada vez que cambia la URL.
+- Qué haría diferente el equipo: definir el contrato JSON y la validación antes de escribir el prompt, y probar cada etapa por separado antes de conectarlas.
+
+**Duda abierta:** qué ve el usuario cuando falla el agente. El análisis de 12.6 la responde: hoy no ve nada.
+
+**Pendientes de cierre de C07**
+
+- Registrar hora de inicio y cierre de la sesión.
+- Adjuntar las cinco capturas de 12.7 y completar la columna «Verificación» de 12.8.
+- Registrar la defensa técnica (integrante, pregunta, respuesta, retroalimentación docente y mejora acordada), que C07 deja con campos vacíos.
+- Marcar los criterios de aceptación cuando exista evidencia.
+- Decidir si se corrigen los hallazgos 1 a 5 de 12.6 antes de la entrega.
+- Completar la revisión de entrega de C07: aportes verificables de todos los integrantes, enlaces de evidencia que funcionen y explicación de las decisiones.
+
+## 13. Referencias
 
 - [README e instrucciones resumidas](../README.md).
 - [Workflows de la versión entregada](../workflows/).
@@ -549,3 +750,4 @@ Los beneficios esperados son menor digitación manual, reglas de clasificación 
 - Clase 08: *Subworkflows, manejo de errores y registros*, profesor Robert Garcia Rey: fundamentos y ejemplos académicos de referencia, no incluidos en este repositorio.
 - [Documentación oficial de subworkflows de n8n](https://docs.n8n.io/flow-logic/subworkflows/).
 - [Documentación oficial de Error Trigger](https://docs.n8n.io/integrations/builtin/core-nodes/n8n-nodes-base.errortrigger/).
+- Bitácora de clase `C07_2026-11-09_Agente_IA_Telegram.md` y workflow [7.0 — Main](<../workflows/Seguimiento leads 7.0 - Main.json>): fuente de la sección 12.
